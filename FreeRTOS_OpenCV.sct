@@ -1,0 +1,21 @@
+; STM32F407 scatter file
+; DMA buffers must stay in SRAM; DMA2 cannot access CCM at 0x10000000.
+
+LR_IROM1 0x08000000 0x00080000  {
+  ER_IROM1 0x08000000 0x00080000  {
+    *.o (RESET, +First)
+    *(InRoot$$Sections)
+    .ANY (+RO)
+    .ANY (+XO)
+  }
+
+  RW_IRAM1 0x20000000 0x00020000  {
+    camer_task.o(DMA_SRAM)
+    .ANY (+RW +ZI)
+  }
+
+  ; CCM is reserved for CPU-only data.
+  RW_IRAM2 0x10000000 0x00010000  {
+    .ANY (+RW +ZI)
+  }
+}
